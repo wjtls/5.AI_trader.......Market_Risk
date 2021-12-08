@@ -1,9 +1,0 @@
-
-import sympy as sm
-from sympy import Derivative
-import pandas as pd 
-import numpy as np 
-import matplotlib.pyplot as plt  
-from sklearn.preprocessing import MinMaxScaler #정규화
-from scipy.optimize import fmin_tnc #옵티마이즈
-from scipy.stats import norm #정규분포
