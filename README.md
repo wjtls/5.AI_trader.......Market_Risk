@@ -33,7 +33,7 @@
 
 ## 본론
 
- - ## PPO2 (PPO에서 추가된 점)
+- ## PPO2 (PPO에서 추가된 점)
   1. Value function clipping :implementation instead fits the value network with a PPO-like objective : 
     
   2. Reward scaling  : reward 를 scaling 한다(분산 감소)
@@ -47,6 +47,7 @@
  
  
 ## 결론
+- 
 
 ## 한계 및 개선
 - State의 정의 (차원의 저주 문제로 인해 1개의 feature만 사용)<br/>
