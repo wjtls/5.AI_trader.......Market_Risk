@@ -2,6 +2,59 @@
 
 ## 강화학습(PPO2 알고리즘)과 위험성회피 전략(LPPL모델, Turblence index)을 적용시킨 트레이더
 
+- 도구
+
+  [![파이썬 Badge](https://img.shields.io/badge/python-3776AB?style=flat-square&logo=python&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+
+  [![파이토치 Badge](https://img.shields.io/badge/pytorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+
+  [![주피터 Badge](https://img.shields.io/badge/jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+
+- 목표: 기존 PPO알고리즘 트레이더의 안정성과 수렴성 향상(PPO2) 및 리스크 회피
+
+- 진행 이유: 논문을 읽던중 Turblence index를 사용하는 방법에 대해 알게 됐다. 또한 과거 LPPL 팀프로젝트를 진행한 경험이 있어<br/>
+             강화학습 에이전트와 결합시키면 안정적인 트레이딩을 할 수 있을것이라 기대.
+
+
+ 
+## 기능
+
+## 요약
+
+<br/>
+
+
+## 본론
+
+ - ## PPO2
+   PPO는 new policy가 old policy 와 크게 다르지않도록 Clipping 하기 때문에 논문에서 안정성이 높고 빠르다는 결과를 보인다. <br/>
+   또한 상승구간에서 타 에이전트에 비해 수익률이 잘나오는 편이다. 그러나 하락구간에서 A2C보다 낮은 샤프지수를 보인다.
+ 
+ 
+ 
+## 결론
+
+## 한계 및 개선
+- 데이터의 노이즈로 인해 오버피팅 가능성 존재.<br/>
+    - Denoise Auto Encoder(DAE) 방식으로 데이터의 노이즈 제거 가능<br/><br/>
+- State의 정의 (차원의 저주 문제로 인해 1개의 feature만 사용)<br/>
+    - 팩터들 사이에서 다중공선성 문제가 생길 수 있으므로 Feature Extraction 방법으로 차원의 저주와 높은 상관계수 문제 해결 예정<br/><br/>
+- RDPG 알고리즘의 하이퍼파라미터 찾기가 타 에이전트에 비해 어려운편.<br/> 
+    - Auto ML 방식으로 개선 예정<br/>
+    - continuous action space에서 효과적인 다른 SOTA 에이전트 사용 (TD3,SLAC,SAC,D4PG 등등)<br/><br/>
+- 시장은 t시점에서 알파를 찾아도 향후 새로운 알파가 생겨난다. <br/> 
+    - 단일 에이전트 보다는 유동적으로 전략을 찾을수 있지만 현 앙상블 에이전트에서도 여전히 전략간 상관계수와 편향이 있다.  <br/> 
+    - 더많은 에이전트를 앙상블하거나 MARL(Multi-Agent-Reinforcement-learning) 사용 예정   <br/>
+    - 각 에이전트가 알고리즘 자체를 스스로 개선하도록 하여 여러 에이전트들의 전략간 상관계수와 편향을 낮출 예정
+
+    
+    
+
+
+
+
+
+
 다중공선성
 
 약한 정상성 시계열데이터가 약한정상성을 만족하려면
