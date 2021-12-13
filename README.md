@@ -34,9 +34,16 @@
 ## 본론
 
  - ## PPO2
-   PPO는 new policy가 old policy 와 크게 다르지않도록 Clipping 하기 때문에 논문에서 안정성이 높고 빠르다는 결과를 보인다. <br/>
-   또한 상승구간에서 타 에이전트에 비해 수익률이 잘나오는 편이다. 그러나 하락구간에서 A2C보다 낮은 샤프지수를 보인다.
- 
+  1. Value function clipping :implementation instead fits the value network with a PPO-like objective : 
+    
+  2. Reward scaling  : reward 를 scaling 한다(분산 감소)
+  3. Reward Clipping :The implementation also clips the rewards with in a preset range : reward를 clipping한다(분산감소)
+
+  4. Observation Normalization: state s를 0-1로 정규화 시킨다. (분산 감소)
+  5. Observation Clipping:  state s 를 clipping 한다. (분산 감소)
+  6. Hyperbolic tan activations : exploration 좀더 잘할수 있도록 한다.
+  7. Global Gradient Clipping : actor와 critic 의 가중치를 clipping 해서 오버피팅을 방지한다
+
  
  
 ## 결론
