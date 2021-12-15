@@ -2,59 +2,59 @@
 
 ## 강화학습(PPO2 알고리즘)과 위험성회피 전략(LPPL모델, Turblence index)을 적용시킨 트레이더
 
-- 도구
+  - 도구
 
-  [![파이썬 Badge](https://img.shields.io/badge/python-3776AB?style=flat-square&logo=python&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+    [![파이썬 Badge](https://img.shields.io/badge/python-3776AB?style=flat-square&logo=python&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
 
-  [![파이토치 Badge](https://img.shields.io/badge/pytorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+    [![파이토치 Badge](https://img.shields.io/badge/pytorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
 
-  [![주피터 Badge](https://img.shields.io/badge/jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
+    [![주피터 Badge](https://img.shields.io/badge/jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white&link=mailto:wjtls01@naver.com)](mailto:wjtls01@naver.com)
 
-- 목표: 기존 PPO알고리즘 트레이더의 안정성과 수렴성 향상(PPO2) 및 리스크 회피
+  - 목표: 기존 PPO알고리즘 트레이더의 안정성과 수렴성 향상(PPO2) 및 리스크 회피
 
-- 진행 이유: 논문을 읽던중 Turblence index를 사용하는 방법에 대해 알게 됐다. 또한 과거 LPPL 팀프로젝트를 진행한 경험이 있어
-             강화학습 에이전트와 위험성 회피 전략들을 결합시키면 안정적인 트레이딩을 할 수 있을것으로 생각하여 진행.
-
+  - 진행 이유: 논문을 읽던중 Turblence index를 사용하여 위험 회피할수 있다는 내용을 보게됐다. 또한 과거 LPPL 팀프로젝트를 진행한 경험이 있어
+               강화학습 에이전트와 위험 회피 전략들을 결합시키면 안정적인 트레이딩을 할 수 있을것으로 생각하여 진행.
 
  
 ## 기능
-- 크롤링 및 API를 사용한 주가,코인 데이터 수집
-- 여러가지 팩터 사용
-- 차원의저주 문제 완화(PCA)
-- 데이터의 노이즈 완화(Denoise Auto Encoder)
-- 위험성 관리(LPPL모델, Turblence index 사용)
-- PPO 에이전트 개선 (PPO -> PPO2)
-- 백테스팅
+  - 크롤링 및 API를 사용한 주가,코인 데이터 수집
+  - 여러가지 팩터 사용
+  - 차원의저주 문제 완화(PCA)
+  - 데이터의 노이즈 완화(Denoise Auto Encoder)
+  - 위험성 관리(LPPL모델, Turblence index 사용)
+  - PPO 에이전트 개선 (PPO -> PPO2)
+  - 백테스팅
 
 ## 요약
+  - PPO2 
+  - 
 
-<br/>
 
 
 ## 본론
 
 - ## PPO2 (PPO에서 추가된 점)
-  1. Value function clipping :implementation instead fits the value network with a PPO-like objective : 
+   -Value function clipping :implementation instead fits the value network with a PPO-like objective : 
     
-  2. Reward scaling  : reward 를 scaling 한다(분산 감소)
-  3. Reward Clipping :The implementation also clips the rewards with in a preset range : reward를 clipping한다(분산감소)
+   - Reward scaling  : reward 를 scaling 한다(분산 감소)
+   - Reward Clipping :The implementation also clips the rewards with in a preset range : reward를 clipping한다(분산감소)
 
-  4. Observation Normalization: state s를 0-1로 정규화 시킨다. (분산 감소)
-  5. Observation Clipping:  state s 를 clipping 한다. (분산 감소)
-  6. Hyperbolic tan activations : exploration 좀더 잘할수 있도록 한다.
-  7. Global Gradient Clipping : actor와 critic 의 가중치를 clipping 해서 오버피팅을 방지한다
+   - Observation Normalization: state s를 0-1로 정규화 시킨다. (분산 감소)
+   - Observation Clipping:  state s 를 clipping 한다. (분산 감소)
+   - Hyperbolic tan activations : exploration 좀더 잘할수 있도록 한다.
+   - Global Gradient Clipping : actor와 critic 의 가중치를 clipping 해서 오버피팅을 방지한다
 
  
  
 ## 결론
-- 
+   -
 
 ## 한계 및 개선
-- State의 정의 (차원의 저주 문제로 인해 1개의 feature만 사용)<br/>
-    - 팩터들 사이에서 다중공선성 문제가 생길 수 있으므로 Feature Extraction 방법으로 차원의 저주와 높은 상관계수 문제 해결 예정<br/><br/>
-- 시장은 t시점에서 알파를 찾아도 향후 새로운 알파가 생겨난다. <br/> 
-    - 더많은 에이전트를 앙상블하거나 MARL(Multi-Agent-Reinforcement-learning) 사용 예정   <br/>
-    - 각 에이전트가 알고리즘 자체를 스스로 개선하도록 하여 여러 에이전트들의 전략간 상관계수와 편향을 낮출 예정
+  - State의 정의 (차원의 저주 문제로 인해 1개의 feature만 사용)<br/>
+      - 팩터들 사이에서 다중공선성 문제가 생길 수 있으므로 Feature Extraction 방법으로 차원의 저주와 높은 상관계수 문제 해결 예정<br/><br/>
+  - 시장은 t시점에서 알파를 찾아도 향후 새로운 알파가 생겨난다. <br/> 
+      - 더많은 에이전트를 앙상블하거나 MARL(Multi-Agent-Reinforcement-learning) 사용 예정   <br/>
+      - 각 에이전트가 알고리즘 자체를 스스로 개선하도록 하여 여러 에이전트들의 전략간 상관계수와 편향을 낮출 예정
 
     
     
