@@ -66,8 +66,9 @@
 
 노이즈 트레이더들의 따라하기 행동은 positive feedback process 와 비례한다.
 트랜드가 있으면 주가데이터는 정상성을 잃어버릴수 있으므로 price데이터 사용은 합리적이지 않다? = 학습이 price 생으로 사용하고 지표 PCA한거 수렴이 어려웠음
-
+검증 단계에서 turbulence index를 사용하여 risk-aversion을 조정한다
 turbulence index는 일별 수익률과 그들의 상호 작용에서 비정상적인 변화의 평균 정도를 포착한다.
+ index t는 시장 붕괴에 대한 risk-aversion을 해결하기 위해 reward function과 통합
 
 다중공선성
 
