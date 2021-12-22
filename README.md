@@ -29,7 +29,6 @@
   - 여러 지표 계산 (stochastic RSI , Volume ratio, 투자 심리도) 
   - LPPL(위험 회피 모델) 출력후 지표로 사용 
   - 모든 지표데이터를 Denoise Auto Encoder 에 통과 시켜 노이즈 제거
-  - 주성분 분석을 하여 2차원 데이터로 추출
   - PPO2 에이전트 학습
   - 
 
