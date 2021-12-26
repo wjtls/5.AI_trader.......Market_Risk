@@ -62,12 +62,14 @@
        이성적 트레이더 집단은 자신의 투자 철학을 가지고 여러 조건을 참고하여 합리적인 의사 결정을 한다.<br/>
        노이즈 트레이더 집단은 뉴스나 전문가, 이성적 트레이더의 행동을 모방하는 집단이다.<br/>
        (노이즈 트레이더들의 따라하기 행동은 positive feedback process, 합리적 트레이더의 행동은 negative feedback 와 비례 한다.)
+       
  <br/><br/>
   - 2. LPPL 함수
      - ![image](https://user-images.githubusercontent.com/60399060/147334170-7e84add0-f730-4d7f-8dcf-70431a01d7a2.png)
      - (A,B,C,phi = 단위분포이며 어떤 구조적 정보도 제공하지 않는다, 오메가(w)= 버블 진행 시간동안 진동수, tc= 임계 시간)
      - LPPL의 가정을 바탕으로 LPPL 함수를 정의.
      - 함수는 일시적 가격 성장을 설명하며 폭락이 생기기 전 임계시간 t를 가진다.
+      
  <br/><br/>
   - 3. 위험성 예측
      - 구간을 rolling 하여 LPPL함수를 주가에 피팅시키면 시퀀스 마다 tc,m,w,A,B,C,pi 변수들을 구할수 있다.
@@ -86,6 +88,7 @@
         u  : denotes the average of historical returns (yt의 평균) <br/>
         sigma : #denotes the covariance of historical returns (yt의 공분산) <br/>
         <br/>
+        
    - 2. 검증 단계에서 turbulence index를 사용하여 위험회피를 한다 index t 는 시장 붕괴에 대한 <br/>
         위험회피(risk-aversion)를 해결하기 위해 reward function과 통합.<br/>
         ![image](https://user-images.githubusercontent.com/60399060/147342208-adf94472-8517-4d74-b7e5-7b989f16e5f4.png)<br/>
@@ -115,8 +118,9 @@
       - state가 수익률을 제대로 설명 할 수 있게끔 정의해야 한다.  <br/>
 
 
-  - State의 정의 두번째 문제 (퀀트 관점)
-      - 팩터간 다중 공선성 문제가 존재
+  - State의 정의 두번째 문제 (퀀트 관점) <br/>
+      - 팩터간 다중 공선성 문제
+      - 
   
   
   
