@@ -109,7 +109,7 @@
      
    - ## 검증 셋 결과 비교
     
-     - ## LPPL 지표를 사용하지 않은 AI 트레이더
+     - ## 위험성 회피 전략을 사용하지 않은 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147517160-6a7bfe2d-e4d1-49ca-a8ea-33a93e5bb2a2.png)
      - 그래프: AI의 Portfolio value
      - 사용 지표: 종가 데이터
@@ -117,7 +117,7 @@
      - AI 에이전트 수익률 : -1.385 %
      - MDD(Maximum draw down) : 시장MDD= 약 -35% 일때 에이전트는 -29%로 시장대비 안정적이나 여전히 큰 하락폭이다.
      - 결론: 종가 데이터 하나만 사용 할 경우 LPPL 지표를 사용 하는 것 보다 하락장에서 손실이 크다, 오버피팅
-    
+    <br/><br/>
      - ## 위험성 회피 전략(LPPL 지표+turbulence index)을 학습 한 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147558704-f37004ee-4297-4258-97a8-dbb0703c8b89.png)
      - 위 그래프: AI의 Portfolio value , 아래 그래프: SP500 주가
