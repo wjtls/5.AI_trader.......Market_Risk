@@ -98,7 +98,7 @@
    
 
 ## 결론
-   - ## 학습 셋 결과
+   - ## 학습 데이터 셋 결과
      - ![image](https://user-images.githubusercontent.com/60399060/147517708-414712f7-0438-4c76-bbd7-5492a089df94.png)
      - 위 그래프: AI의 Portfolio value, 아래 그래프: SP500 주가
      - 사용 지표: 종가 데이터, LPPL 지표
@@ -107,7 +107,7 @@
      - 비고 : 학습 완료 (리워드 수렴, PV 증가, actor net과 critic net 의 target 피팅 확인)
 
      
-   - ## 검증 셋 결과 비교
+   - ## 검증 데이터 셋 결과
     
      - ## 위험성 회피 전략을 사용하지 않은 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147517160-6a7bfe2d-e4d1-49ca-a8ea-33a93e5bb2a2.png)
