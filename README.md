@@ -100,6 +100,7 @@
 ## 결론
    - ## 학습 셋 결과
      - ![image](https://user-images.githubusercontent.com/60399060/147517708-414712f7-0438-4c76-bbd7-5492a089df94.png)
+     - 위 그래프: AI의 Portfolio value, 아래 그래프: SP500 주가
      - 사용 지표: 종가 데이터, LPPL 지표
      - 시장 수익률 : 27.9762 %
      - AI 에이전트 수익률 : 86.120 %
@@ -110,6 +111,7 @@
     
      - ## LPPL 지표를 사용하지 않은 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147517160-6a7bfe2d-e4d1-49ca-a8ea-33a93e5bb2a2.png)
+     - 그래프: AI의 Portfolio value
      - 사용 지표: 종가 데이터
      - 시장 수익률 : 8.411694 %
      - AI 에이전트 수익률 : -1.385 %
@@ -118,6 +120,7 @@
      
      - ## LPPL 지표를 사용 한 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147514316-17907de2-cca8-405c-ba2a-48b34c182122.png)
+     - 위 그래프: AI의 Portfolio value , 아래 그래프: SP500 주가
      - 사용 지표: 종가 데이터, LPPL 지표
      - 시장 수익률 : 8.411694 %
      - AI 에이전트 수익률 : 13.113%
