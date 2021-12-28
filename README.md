@@ -160,23 +160,6 @@
   - Dragon-kings and Predictions Diagnostics and Forecasts for the World Financial Crisis [LPPL 논문]
   - Deep Reinforcement Learning for Automated Stock Trading: An Ensemble Strategy [앙상블 논문 turbulence index]
   
-  <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-<br/><br/><br/>
-  
-  
-  
-  ## log (개인 기록)
-   - 2021.12.28 주피터 저장
-      - ![image](https://user-images.githubusercontent.com/60399060/147560840-59eafc47-6161-424d-a5d8-7f537976e5ec.png)
-      - ![image](https://user-images.githubusercontent.com/60399060/147560913-9a1fca56-4cd1-4d74-917f-f26fb21bf88e.png)
-      - 검증 데이터에서 더 수익률 잘 나오는 방법 사용 결과(trading, val, test 에서 모두 우수) 
-
-
+  <br/><br/><br/><br/>
   
 
