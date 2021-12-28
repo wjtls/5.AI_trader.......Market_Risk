@@ -92,7 +92,7 @@
    - 2. 검증 단계에서 turbulence index를 사용하여 위험회피를 한다 index t 는 시장 붕괴에 대한 <br/>
         위험회피(risk-aversion)를 해결하기 위해 reward function과 통합.<br/>
         ![image](https://user-images.githubusercontent.com/60399060/147342208-adf94472-8517-4d74-b7e5-7b989f16e5f4.png)<br/>
-        turbulence index가 기준 값에 도달하면 전량 매도한다.
+        turbulence index가 기준 값을 초과하면 전량 매도한다.
          
  <br/><br/><br/><br/>
    
