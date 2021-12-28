@@ -126,7 +126,6 @@
      - AI 에이전트 수익률 : 19.697 %
      - MDD(Maximum draw down : 최대 손실폭) : 시장MDD= 약 -35% 일때 에이전트는 최대 -20.337 % 의 낙폭을 보인다.
      - 결론: 위험성 전략을 학습 할 경우 PPO2의 탐욕적인 매매와 MDD에서 안정적인 트레이딩을 보장 한다. <br/><br/>
-   
      
   
 <br/><br/><br/><br/>
@@ -154,5 +153,18 @@
       - 약한 의존성(inf 시점으로 갈때 상관 관계가 0으로 수렴),약한 정상성을 가져야 대수의 법칙(표본의 관측 수가 많으면 통계적 추정의 정확도가 향상) 적용 가능
       - 트랜드가 있으면 주가데이터는 fat tail을 가지므로 주가데이터 하나만 지표로 사용하는 것은 합리적이지 않다
   
+  
+  
+  <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+  
+  
+  
+  ## log (개인 기록)
+   - 2021.12.28 주피터 저장
+      - ![image](https://user-images.githubusercontent.com/60399060/147560840-59eafc47-6161-424d-a5d8-7f537976e5ec.png)
+      - ![image](https://user-images.githubusercontent.com/60399060/147560913-9a1fca56-4cd1-4d74-917f-f26fb21bf88e.png)
+      - 검증 데이터에서 더 수익률 잘 나오는 방법 (trading, val, test 에서 모두 우수) 
+
+
   
 
