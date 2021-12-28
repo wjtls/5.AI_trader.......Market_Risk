@@ -152,8 +152,12 @@
       - 주가분포의 비정상성 : 모든 시점에 대해 일정한 평균을 가지지 않으며 분산이 일정하지 않다. (정상성을 가지면 AR모형 사용가능)
       - 약한 의존성(inf 시점으로 갈때 상관 관계가 0으로 수렴),약한 정상성을 가져야 대수의 법칙(표본의 관측 수가 많으면 통계적 추정의 정확도가 향상) 적용 가능
       - 트랜드가 있으면 주가데이터는 fat tail을 가지므로 주가데이터 하나만 지표로 사용하는 것은 합리적이지 않다
+  <br/><br/><br/><br/>
   
-  
+## 참고
+  - Proximal Policy Optimization Algorithms [PPO 논문]
+  - IMPLEMENTATION MATTERS IN DEEP POLICY GRADIENTS:A CASE STUDY ON PPO AND TRPO [PPO2 논문]
+  - Dragon-kings and Predictions Diagnostics and Forecasts for the World Financial Crisis [LPPL 논문]
   
   <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <br/><br/><br/>
