@@ -98,16 +98,23 @@
    
 
 ## 결론
-   - 검증 셋 백테스팅 결과
+   - 검증 셋 결과
+     - ## LPPL 지표를 사용 한 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147514316-17907de2-cca8-405c-ba2a-48b34c182122.png)
      - 사용 지표: 종가 데이터, LPPL 지표
-     - 시장 수익률 : 8.4116935 %
+     - 시장 수익률 : 8.411694 %
      - AI 에이전트 수익률 : 13.113%
-     - MDD(Maximum draw down : 최대 손실폭) : 시장MDD= -35% 일때 에이전트는 -19%로 안정적인 모습을 보인다.
+     - MDD(Maximum draw down : 최대 손실폭) : 시장MDD= 약 -35% 일때 에이전트는 -19%로 안정적인 모습을 보인다.
      - 결론: LPPL을 지표로 추가 할 경우 MDD에서 안정적인 트레이딩을 한다. <br/><br/>
      
-     
-     - 
+     - ## LPPL 지표를 사용하지 않은 AI 
+     - ![image](https://user-images.githubusercontent.com/60399060/147517160-6a7bfe2d-e4d1-49ca-a8ea-33a93e5bb2a2.png)
+     - 사용 지표: 종가 데이터
+     - 시장 수익률 : 8.411694 %
+     - AI 에이전트 수익률 : -1.385 %
+     - MDD(Maximum draw down) : 시장MDD= 약 -35% 일때 에이전트는 -29%로 시장대비 안정적이나 여전히 큰 하락폭이다.
+     - 결론: LPPL 지표를 추가 할 경우 종가 데이터 하나만 사용 하는 것보다 하락장에서 손실이 적다.
+
    
      
   
