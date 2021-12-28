@@ -156,6 +156,13 @@
   
   
   <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
+<br/><br/><br/>
   
   
   
@@ -163,7 +170,7 @@
    - 2021.12.28 주피터 저장
       - ![image](https://user-images.githubusercontent.com/60399060/147560840-59eafc47-6161-424d-a5d8-7f537976e5ec.png)
       - ![image](https://user-images.githubusercontent.com/60399060/147560913-9a1fca56-4cd1-4d74-917f-f26fb21bf88e.png)
-      - 검증 데이터에서 더 수익률 잘 나오는 방법 (trading, val, test 에서 모두 우수) 
+      - 검증 데이터에서 더 수익률 잘 나오는 방법 사용 결과(trading, val, test 에서 모두 우수) 
 
 
   
