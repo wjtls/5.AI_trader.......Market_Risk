@@ -98,7 +98,7 @@
    
 
 ## 결론
-   - 학습 셋 결과
+   - ## 학습 셋 결과
      - ![image](https://user-images.githubusercontent.com/60399060/147517708-414712f7-0438-4c76-bbd7-5492a089df94.png)
      - 사용 지표: 종가 데이터, LPPL 지표
      - 시장 수익률 : 27.9762 %
@@ -106,7 +106,7 @@
      - 비고 : 학습 완료 (리워드 수렴, PV 증가, actor net과 critic net 의 target 피팅 확인)
 
      
-   - 검증 셋 결과
+   - ## 검증 셋 결과
      - ## LPPL 지표를 사용 한 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147514316-17907de2-cca8-405c-ba2a-48b34c182122.png)
      - 사용 지표: 종가 데이터, LPPL 지표
