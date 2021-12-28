@@ -1,6 +1,6 @@
 # Risk-management-LPPL-PPO2-AI-trader
 
-## 강화학습(PPO2 알고리즘)과 위험성회피 전략(LPPL모델, Turblence index)을 적용시킨 AI 트레이더
+## AI (PPO2  알고리즘)과 위험성회피 전략(LPPL모델, Turblence index)을 적용시킨 강화학습 트레이더
 
   - 도구
 
