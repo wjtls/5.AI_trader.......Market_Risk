@@ -1,0 +1,25 @@
+data_count=1200 #호출할 데이터 갯수(max갯수 = 설정된 기간)
+minute='day'    #데이터의 분봉 ex) 'minute3'으로 설정하면 3분봉, day=일봉
+ratio=[7,2,1]  #train,val,test set 비율 train과 val만 넣는다
+sto_period=14  #sto Rsi의 기간
+vr_period=14  #volume ratio의 기간
+tm_period=14  #투자심리도의 기간
+env=Env()
+
+#DAE-PCA 파라미터
+DAE_dim=6 #DAE에 들어갈 feature 갯수
+PCA_out_dim=1 #출력될 아웃풋 dim
+input_dim_=2  #LSTM dim
+
+device='cpu'
+
+coin_or_stock='stock'
+k_epoch=20
+
+
+#PPO agent 하이퍼 파라미터
+np.random.seed(1)
+cash=10000000 #현금
+cost=0.00015
+window=20
+tur_threshold=20
