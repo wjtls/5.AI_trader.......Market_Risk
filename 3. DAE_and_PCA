@@ -1,0 +1,111 @@
+
+
+class DAE_PCA(nn.Module,Env): #Denoise Auto Encoding and PCA class
+                          #Linear network를 사용할수도 있지만 Conv net 을 사용함으로 
+                          #여러 feature의 특징추출을 목적으로 생각했기에 CNN을 사용했다
+                          #지표들을 denoising 한후 PCA로 차원축소를 실행한다.
+                          
+                          
+    def __init__(self,input_,dim,PCA_out_dim):
+        nn.Module.__init__(self)
+        Env.__init__(self)
+        
+        self.input_= self.CNN_observation(input_,dim)
+        self.dim=dim
+        self.PCA_out_dim=PCA_out_dim
+        
+        self.encoder=nn.Sequential(nn.ConvTranspose2d(self.dim, 128, kernel_size=3, stride=1),
+                                     nn.MaxPool2d(3, stride=1,padding=1),
+                                    nn.ReLU(),
+                                nn.ConvTranspose2d(128,64,kernel_size=3,stride=1),
+                                   nn.MaxPool2d(3, stride=1,padding=1),
+                                    nn.ReLU(),
+                                nn.ConvTranspose2d(64,self.dim,kernel_size=3,stride=1),
+                                 )
+        
+        self.decoder=nn.Sequential(nn.Conv2d(self.dim,128,kernel_size=3,stride=1),
+                                    nn.ReLU(),
+                                   nn.Conv2d(128,64,kernel_size=3,stride=1),
+                                  nn.Conv2d(64,self.dim,kernel_size=3,stride=1))
+        
+        
+        
+        self.check_point=os.path.join('DAE_weight') #저장위한 체크포인트
+        self.optimizer= optim.Adam(self.parameters(),lr=3e-5,eps=1e-10)
+        
+        
+    def load(self):
+        self.load_state_dict(torch.load(self.check_point))
+        
+        
+    def save(self):
+        torch.save(self.state_dict,self.check_point)
+        
+        
+    def forward(self):
+        res=self.encoder(self.input_)
+        res=self.decoder(res)
+        return res
+     
+    def train(self,epoch):    #DAE 실행후
+        for t in range(epoch):
+            v_hat=self.forward()
+            
+            with torch.no_grad():
+                target=self.input_
+            
+            self.optimizer.zero_grad()
+            loss=F.mse_loss(v_hat,target.detach())
+            
+            loss.backward()
+            self.optimizer.step()
+            if t%10==0:
+                print(t+1,'/',epoch,'스탭',loss,': loss값')
+                
+            if loss<0.0003: #로스가 일정수치 아래로 감소하면 학습멈춘다
+                ('목표 loss 도달. overfitting 방지를위해 학습 정지')
+                break
+        self.save() #가중치 저장
+        
+        #데이터 프레임으로 변환하여 PCA 실행
+        DF_close=pd.Series(v_hat[0][0].view(-1).detach())
+        DF_total_sto=pd.Series(v_hat[0][1].view(-1).detach())
+        DF_VR=pd.Series(v_hat[0][2].view(-1).detach())
+        DF_tm=pd.Series(v_hat[0][3].view(-1).detach())
+        DF_lppl=pd.Series(v_hat[0][4].view(-1).detach())
+        DF_log=pd.Series(v_hat[0][5].view(-1).detach())
+        
+        #PCA
+        c=pd.DataFrame([v_hat[0][0].view(-1).tolist(),v_hat[0][1].view(-1).tolist(),v_hat[0][2].view(-1).tolist(),v_hat[0][3].view(-1).tolist(),v_hat[0][4].view(-1).tolist(),v_hat[0][5].view(-1).tolist()])
+        index_data=['close','sto','VR','tm','lppl','log']
+        c.index=index_data
+        pca1 = PCA(n_components=1)
+        X_low = pca1.fit_transform(c) #주성분을 구성하는 기존 차원의 선형결합 계수
+        X_low=pd.DataFrame(X_low)
+        X_low.columns=['value']
+        X_low.index=index_data
+        
+        
+        #PCA 차원 추출에 들어갈 데이터를 고름
+        PCA_data1=pd.concat([DF_total_sto,DF_tm,DF_VR],axis=1) #하나의 DataFrame으로 묶는다
+        PCA_result1,PCA_explain1=self.PCA(PCA_data1,self.PCA_out_dim)
+        
+        clo_data=v_hat[0][0].view(-1).tolist()
+        log_수익=v_hat[0][5].view(-1).tolist()
+        _lppl=v_hat[0][4].view(-1).tolist()
+        
+        
+        #PPO2의 input 생성
+        Data0=pd.DataFrame(PCA_result1)[0].values.tolist()
+        
+        input_=torch.Tensor([Data0,log_수익,_lppl])          #PCA 주성분, log수익률, lppl지표
+        input_2=torch.Tensor([clo_data,_lppl])               #dae 가격, lppl
+        input_3=torch.Tensor([log_수익])                     #log 수익률
+        input_4=torch.Tensor([log_수익,_lppl])               #log 수익, lppl
+        input_5=torch.Tensor([clo_data])                     #clo data
+        
+        print(X_low,'주성분 분석')
+        print(PCA_explain1,'PCA분산 설명')
+        print('전처리 완료.')
+        
+        return input_,input_2,input_3,input_4,input_5   #여러가지 인풋 데이터를 생성
