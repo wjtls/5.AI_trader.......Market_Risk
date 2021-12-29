@@ -1,0 +1,61 @@
+class PPO_critic(nn.Module):
+    def __init__(self,device,window):
+        nn.Module.__init__(self)
+        
+        self.hidden_size=32
+        self.num_layers=1
+        
+        self.LSTM=nn.LSTM(input_size=window,hidden_size=self.hidden_size,num_layers=self.num_layers,batch_first=True,bidirectional=True)
+        self.Linear=nn.Sequential(nn.Linear(self.hidden_size*2,32),
+                                  nn.ReLU(),
+                                 nn.Linear(32,1))
+        
+        self.optimizer= optim.Adam(self.parameters(),lr=1e-4,eps=1e-10)
+        self.check_point= os.path.join('PPO2_critic_weight')
+        self.to(device)
+    
+        
+    def forward(self,input_):
+        p,_=self.LSTM(input_)
+        v=self.Linear(p[:,-1,:])
+        return v
+    
+    def load(self):
+        self.load_state_dict(torch.load(self.check_point))
+        
+    def save(self):
+        torch.save(self.state_dict(),self.check_point)
+        
+        
+class PPO_actor(nn.Module):
+    def __init__(self,device,window):
+        nn.Module.__init__(self)
+        
+        self.hidden_size=32
+        self.num_layers=1
+        
+        self.LSTM=nn.LSTM(input_size=window,hidden_size=self.hidden_size,num_layers=self.num_layers,batch_first=True,bidirectional=True)
+        self.Linear=nn.Sequential(nn.Linear(self.hidden_size*2,32),
+                                  nn.ReLU(),
+                                 nn.Linear(32,3))
+        
+        self.optimizer= optim.Adam(self.parameters(),lr=1e-4,eps=1e-10)
+        self.check_point= os.path.join('PPO2_actor_weight')
+        self.to(device)
+    
+        
+    def forward(self,input_):
+        p,_=self.LSTM(input_)
+        v=self.Linear(p[:,-1,:])
+        return v
+    
+    
+    
+    def load(self):
+        self.load_state_dict(torch.load(self.check_point))
+    
+    
+    def save(self):
+        torch.save(self.state_dict(),self.check_point)
+        
+ 
