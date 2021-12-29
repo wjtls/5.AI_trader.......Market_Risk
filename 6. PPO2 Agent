@@ -1,0 +1,362 @@
+ 
+    
+class PPO2(nn.Module,Env):
+    '''''
+    -Additional skills 
+    
+    1. Value function clipping :implementation instead fits the value network with a PPO-like objective
+    
+    2. Reward scaling        
+    3. Reward Clipping :The implementation also clips the rewards with in a preset range (usually [−5,5] or [−10,10])
+
+    4. Observation Normalization 
+    5. Observation Clipping:
+    6. Hyperbolic tan activations :exploration 좀더 잘할수 있도록함
+    7. Global Gradient Clipping 
+    
+    
+    8. Adam learning rate annealing
+    9. Orthogonal initialization and layer scaling
+    
+    '''''
+    
+    def __init__(self,window,                          #LSTM 윈도우 사이즈
+                       cash,                            #초기 보유현금
+                        cost,                           #수수료 %
+                        device,                         #디바이스 cpu or gpu 
+                        k_epoch,                         #K번 반복
+                        input_,                          #인풋 데이터
+                        price_data,                       #주가 데이터
+                        train_val_test,                     #데이터셋 이름
+                        input_dim ,                        #feature 수
+                        coin_or_stock,                   #코인인지 주식인지
+                        tur_thresh                      #turbulence index의 threshold값
+                         ):                       
+                 
+        #클래스 상속
+        nn.Module.__init__(self)
+        Env.__init__(self)
+        
+        #데이터
+        self.window=window
+    
+        if train_val_test=='train':
+            self.input=price_data[0]
+        elif train_val_test=='val':
+            self.input=price_data[1]
+        else:
+            self.input=price_data[2]
+            
+        self.scale_input=input_
+        
+        self.price_data=self.input.to(device)[self.window-1:]    #종가 데이터
+        self.scale_price_data=self.scaling_price(self.price_data)
+        
+        self.LSTM_input=self.LSTM_observation(self.scale_input,self.window,input_dim) #LSTM 데이터 
+        
+        
+        #에이전트 변수
+        self.cash=cash  #가진 현금
+        self.cost=cost #수수료 비용
+        self.PV=0    #현 포트폴리오 벨류 저장
+        self.past_PV=self.cash #한스탭이전 포트폴리오 벨류 (초기는 현금)
+        self.stock=0 #가진 주식수
+        self.gamma=0.99
+        self.Cumulative_reward=0 #누적 리워드
+        self.old_prob=0#old prob 저장
+        self.total_loss=0 # actor_loss+critic_loss 
+        self.back_testing=False #백테스팅 or 실전매매일경우 True
+        self.coin_or_stock=coin_or_stock
+        
+        self.Advantage_hat=[]
+        self.Advantage=0
+        self.target_data=[]
+        
+        self.next_step=[]
+        self.action_data=[]
+        self.reward_data=[]
+        self.step_data=[]
+        
+        self.epsilon=0.2   #PPO의 입실론
+        self.lambda_=0.95  #람다값
+        self.K_epoch=k_epoch
+        self.idx=0         #idx (policy 추출위함)
+        self.tur_thresh=tur_thresh #turbulence index의 threshold
+        self.tur_value=0             #turbulence index의 값
+        self.tur_yt_data=[]            #turbulence index의 yt
+        
+        self.device=device
+        
+        
+        
+    def reset(self):
+        self.cash=cash  #가진 현금
+        self.cost=cost #수수료 퍼센트
+        self.PV=0    #포트폴리오 벨류 저장
+        self.past_PV=self.cash #이전 포트폴리오 벨류 (초기는 현금과같음))
+        self.stock=0 #가진 주식수
+        self.step_data=[]
+        self.gamma=0.99
+        self.Cumulative_reward=0 #누적 리워드
+        self.back_testing=False
+        
+        self.old_prob=[]
+        self.next_step=[]
+        self.action_data=[]
+        self.reward_data=[]
+        self.step_data=[]
+        self.idx=0
+        
+        self.tur_value=0
+        self.tur_yt_data=[]
+        
+        self.Advantage_hat=[]
+        self.Advantage=0
+        self.target_data=[]
+        
+        
+    def scaling_price(self,price):  #price scaling
+        scaler=MinMaxScaler()
+        res=scaler.fit_transform(price)
+        
+        return res
+    
+    
+    def tur_index(self,PV_data,step): #turbulence index 계산
+        t=1
+        
+        yt=0
+        u=0
+        sig=1
+        if step>2:
+            yt = (PV_data[-1]-PV_data[-2])/PV_data[-2] #the stock returns for current period t
+            self.tur_yt_data.append(yt)
+            u = np.mean(self.tur_yt_data) #denotes the average of historical returns
+            sig= np.cov(self.tur_yt_data) #denotes the covariance of historical returns.
+        
+        if len(self.tur_yt_data)==1: #sig의 nan값 방지
+            sig= self.tur_yt_data[0]
+            
+        res = (yt-u)*(1/sig)*(yt-u)
+        return res
+    
+        
+    def decide_action(self,policy):    #개별액션 결정함수, 매매할 수량과 액션을 반환
+        policy1=torch.clamp(policy,0,1)
+        action_s=Categorical(policy1)
+        action=action_s.sample() #매도시 최소 1주 매도
+        
+        if self.back_testing==True: #백테스팅중인 경우
+            action=torch.argmax(policy1)
+        
+        if action==0:  #매도
+            if self.coin_or_stock=='coin':
+                unit0=policy1[0]*self.stock
+                unit=[unit0.item(),0,0]
+            else:
+                unit0=max((policy1[0]*self.stock),1)
+                unit0=round(float(unit0))
+                unit=[unit0,0,0]
+
+        elif action==2:      #매수
+            unit2=(policy1[2]*self.cash)/self.price
+            if self.coin_or_stock=='coin':
+                unit=[0,0,unit2.item()]
+            else:
+                unit2=max(((policy1[2]*self.cash)/self.price),1)
+                unit2=round(float(unit2))
+                if unit2<1: #소수점단위의 주식수는 없으므로
+                    unit2=0
+                unit=[0,0,unit2]
+
+        else: #관망
+            unit=[0,0,0]
+        
+        if self.back_testing==True and self.tur_value>self.tur_thresh: #turbulence idx가 threshold 초과시 전량매도
+            action=torch.Tensor([0])
+            unit=[self.stock,0,0]
+            
+        return action,unit
+    
+    
+    def optimize(self,policy_net,value_net):
+        prob=policy_net(self.LSTM_input)
+        value=value_net(self.LSTM_input) 
+        policy=F.softmax(prob)
+        log_policy=F.log_softmax(prob)
+
+        total_reward=torch.tensor(self.reward_data,dtype=self.LSTM_input.dtype).to(self.LSTM_input.device).view(-1,1) #텐서 새로만들면 항상 device설정해줘야함
+        total_step=self.step_data
+        total_next=self.next_step
+        
+        #Advantage_hat 계산(#PPO 논문 12번식) GAE
+        with torch.no_grad():
+            target= total_reward+self.gamma*value_net(self.LSTM_input)[total_next]
+            delta= target.detach()-value_net(self.LSTM_input)[total_step]
+            delta= torch.Tensor(delta.tolist()[::-1]).to(self.LSTM_input.device)  #델타를 역순으로 저장한다
+            
+            self.Advantage_hat=[]
+            for delta_ in delta:
+                self.Advantage=((self.gamma*self.lambda_))*self.Advantage+delta_
+                self.Advantage_hat.append(self.Advantage)
+
+        self.Advantage_hat.reverse()
+        self.Advantage_hat= torch.tensor(self.Advantage_hat,dtype=torch.float).view(-1).to(self.LSTM_input.device)
+
+        #에피소드때 구한 트레젝터리 가져온뒤 surr obj 및 ratio계산
+        old_log_prob=torch.tensor(self.old_prob,dtype=torch.float).to(self.LSTM_input.device)
+        old_log_prob=old_log_prob[total_step].view(-1,1)
+        
+        old_action=torch.tensor(self.action_data).to(self.LSTM_input.device).view(-1,1)
+        new_prob_=log_policy[total_step] 
+        new_prob=new_prob_.gather(1,old_action)
+        
+        #compute surr
+        prob_ratio =torch.exp(new_prob-old_log_prob).view(-1)
+        surr1=prob_ratio *self.Advantage_hat
+        surr2=torch.clamp(prob_ratio,1-self.epsilon,1+self.epsilon)*torch.tensor(self.Advantage_hat).to(self.LSTM_input.device)
+        
+        #value clipping
+        value_surr1= F.mse_loss(value[total_step],target.detach())
+        pre_step=np.array(total_step)-1
+        pre_step=pre_step.tolist()
+        value_surr2= F.mse_loss(torch.clamp(value[total_step],value[pre_step]-self.epsilon, value[pre_step]+self.epsilon),target.detach())
+        
+        #loss 계산
+        policy_loss= -torch.min(surr1,surr2).to(self.LSTM_input.device)
+        policy_loss= policy_loss.mean()
+        value_loss= min(value_surr1,value_surr2)
+        self.total_loss= policy_loss+value_loss
+        
+        #업데이트
+        policy_net.optimizer.zero_grad()
+        value_net.optimizer.zero_grad()
+        
+        policy_loss.backward(retain_graph=True)
+        value_loss.backward()
+        
+        torch.nn.utils.clip_grad_norm_(policy_net.parameters(), 0.01)
+        torch.nn.utils.clip_grad_norm_(value_net.parameters(), 0.01)
+        
+        policy_net.optimizer.step()
+        value_net.optimizer.step()
+        
+    
+    def train(self,epoch):
+        self.back_testing=False
+        
+        policy_net=PPO_actor(self.device,self.window) 
+        value_net=PPO_critic(self.device,self.window)
+        
+        PV_data=[]
+        loss_data=[]
+        reward_data=[]
+        
+        for _ in range(epoch):   #총 에포크 반복
+            self.reset()
+            
+            ##############에피소드 생성
+            for epi_step in range(len(self.price_data)-1):    #에피소드를 돈다(K=1인 반복횟수 에이전트. )
+                with torch.no_grad():
+                    prob_=policy_net(self.LSTM_input).to(self.device)  
+                
+                policy=F.softmax(prob_)
+                log_prob=F.log_softmax(prob_)
+
+                self.price=self.price_data[[epi_step]]   #현재 주가업데이트
+                action,unit=self.decide_action(policy[epi_step])
+                
+                #(액션 리워드 스탭 )각각저장 및 스탭실행
+                action,reward,step_=self.discrete_step(action,unit,epi_step,self) 
+                self.old_prob.append(F.log_softmax(prob_)[epi_step][action])
+                self.next_step.append(step_+1)
+                self.Cumulative_reward+=reward
+                
+                
+            for K_epoch in range(self.K_epoch): #논문에서 정의한 K 만큼 반복학습
+                #############생성된 에피소드 학습
+                self.optimize(policy_net,value_net)
+                
+                reward_data.append(self.Cumulative_reward)
+                PV_data.append(self.PV)
+
+                policy_net.save()
+                value_net.save()
+            print('학습중',_+1,'/',epoch,'진행','리워드',self.Cumulative_reward.item(),'PV',self.PV.item())
+            
+            
+        plt.plot(reward_data)
+        plt.title('total reward')
+        plt.plot(loss_data)
+
+
+            #old는 에피소드돌릴때 폴리시(실제했던확률)- 즉 액션할때 했던 폴리시
+            #. new는 학습할때 새로뽑은 폴리시
+            
+            
+    def back_test(self,train_val_test,input_,price_data,input_dim): #백테스팅
+        self.reset() #리셋
+        self.back_testing=True
+        
+        ##train or val or test셋 호출
+            
+        if train_val_test=='train':
+            self.input=price_data[0]
+        elif train_val_test=='val':
+            
+            self.input=price_data[1]
+        else:
+            self.input=price_data[2]
+            
+        self.scale_input=input_
+        self.price_data=self.input.to(device)[self.window-1:]    #종가 데이터
+        self.price_data=self.price_data
+        self.scale_price_data=self.scaling_price(self.price_data)
+        
+        self.LSTM_input=self.LSTM_observation(self.scale_input,self.window,input_dim) #LSTM 데이터 
+            
+        ##네트워크 호출
+        policy_net=PPO_actor(self.device,self.window) 
+        
+        ##저장된 가중치 load
+        policy_net.load()
+        
+        ##누적 PV데이터
+        PV_data=[]
+        
+        #back testing
+        for step in range(len(self.scale_price_data)-1):
+            prob_=policy_net(self.LSTM_input).to(self.device)  
+            policy=F.softmax(prob_) #policy
+
+            self.price=self.price_data[step]   #현재 주가업데이트
+            self.tur_value = self.tur_index(PV_data,step) # turbulence index
+        
+            action,unit=self.decide_action(policy[step]) #액션 선택
+            action,reward,step_=self.discrete_step(action,unit,step,self)  #PV및 cash, stock 업데이트
+            
+            
+            #데이터 저장
+            PV_data.append(self.PV)
+            if step%50==0:
+                print(step+1,'/',len(self.scale_price_data),'테스팅중..')
+                
+        #시각화
+        print('PPO Agent 백테스팅 완료')
+        
+        if self.back_testing==True: #백테스팅일경우 출력 
+            fig,ax=plt.subplots(3,1,figsize=(10,9))
+            ax[0].set_ylabel('Agent PV')
+            ax[0].plot(PV_data)
+
+            ax[1].set_ylabel('price')
+            ax[1].plot(self.price_data)
+            
+            ax[2].plot(실험)
+            
+        
+        print((((self.price_data[-1]/self.price_data[0])-1)*100).item(),':Market ratio of return')
+        print(float(((PV_data[-1]/PV_data[0])-1)*100),':Agent return')
+        
+        return PV_data
+
