@@ -11,12 +11,7 @@ class PPO2(nn.Module,Env):
 
     4. Observation Normalization 
     5. Observation Clipping:
-    6. Hyperbolic tan activations :exploration 좀더 잘할수 있도록함
-    7. Global Gradient Clipping 
-    
-    
-    8. Adam learning rate annealing
-    9. Orthogonal initialization and layer scaling
+    6. Global Gradient Clipping 
     
     '''''
     
