@@ -12,7 +12,9 @@
 
   - 목표: 기존 PPO알고리즘 트레이더의 안정성과 수렴성 향상(PPO2) 및 리스크 회피
 
-  - 진행 이유: 논문을 읽던중 Turbulence index를 사용하여 위험 회피할수 있다는 내용을 보게됐다. 또한 과거 LPPL(위험성 회피 모델) 팀프로젝트를 진행한 경험이 있어 강화학습 에이전트와 위험 회피 전략들을 결합시키면 안정적인 트레이딩을 할 수 있을것으로 예상하여 진행.
+  - 진행 이유: 논문을 읽던중 Turbulence index를 사용하여 위험 회피할수 있다는 내용을 보게됐다. 또한 과거 LPPL(위험성 회피 모델) 팀프로젝트를 진행한 경험이 있어 강화학습 에이전트와 위험 회피 전략들을 결합시키면 안정적인 트레이딩을 할 수 있을것으로 예상하여 진행.<br/>
+ 
+  - 특이 사항: 현 모델은 향후 타 프로젝트에 사용될 예정 이므로 코드는 요청시 공개.(wjtls01@naver.com , 010-4402-5325)
 
 <br/><br/><br/><br/>
  
@@ -33,7 +35,8 @@
 <br/><br/><br/><br/>
 
 ## 본론
-- ## PPO2 (PPO에서 추가된 점)
+- ## PPO2 (PPO + 추가 기법)<br/>
+   - ## 추가 기법
    - 기존 PPO 알고리즘에 여러 기법들을 추가하여 분산을 감소 시키고 학습의 안정성과 수렴성을 높인다.
   
    - 1. Value function clipping :implementation instead fits the value network with a PPO-like objective<br/> 
@@ -46,7 +49,22 @@
    - 4. Observation Normalization: state s를 0-1로 정규화 시킨다. (분산 감소)
    - 5. Observation Clipping:  state s 를 clipping 한다. (분산 감소)
    - 6. Global Gradient Clipping : actor와 critic 의 가중치를 clipping (오버피팅 방지)
-
+   <br/>
+   
+   - ## PPO
+   - Deep Reinforcement Learning in Quantitative Algorithmic Trading: A Review 에 따르면 PPO는 타 RL알고리즘 보다 주식시장의 복잡한 환경에서 잘작동 한다.
+   
+   - ![image](https://user-images.githubusercontent.com/60399060/146135720-9f131c45-c616-4383-bf87-f9235cf7f55f.png)
+   - new policy가 old policy 와 크게 다르지않도록 Clipping 하기 때문에 논문에서 안정성이 높고 빠르다는 결과를 보인다. <br/>
+   
+   - ![image](https://user-images.githubusercontent.com/60399060/146135945-5e1bd0e9-8ef7-49c2-9d41-b2ae8ebb9f25.png)
+   - GAE Advantage를 사용하여 Advantage를 잘추산한다. 이로인해 분산을 더 적절하게 감소 시킬수 있다.
+   - 신뢰 지역(Trust region) 에서 GAE를 구하고 r세타를 연산하는 덕에 buffer를 사용할수 있고 next batch에서 좋지않은 policy를 뽑을 경우 재사용하지 않는다
+ 
+   - ![image](https://user-images.githubusercontent.com/60399060/146136194-aa3647e1-29a8-45f4-a21c-6d38884ab353.png)
+   - PPO는 새로운 정책이 기존 정책에서 너무 멀리 바뀌는 것을 피하기 위해 대리 목표를 활용하여 min을 취함으로 샘플 효율성 문제를 해결한다.
+   - PPO는 정책 업데이트를 정규화하고 교육 데이터를 재사용할 수 있기 때문에 대리 목표는 PPO의 핵심 기능이다. 따라서 
+     ppo 는 on policy이지만 on policy 의 수렴성과 대리목표(Surrogate loss) 사용으로 off policy의 장점인 샘플 효율성을 가지게 된다.
 
 
 
@@ -78,7 +96,7 @@
      - O, D를 정의하고 변수들의 범위를 설정
      - positive feedback 계산 : 피팅을해서 구한 변수가 해당 범위안에 들어간다면 버블의 위험성이 존재한다 (카운트 +=1 하여 횟수 저장)
      - negative feedback 계산 : 변수가 해당 범위를 만족하지 않는다면 위험성이 낮다.(합리적 트레이더들이 많은 구간)
-     - 
+     
 <br/><br/><br/>
 
  - ## turbulence index (위험성 지표)
@@ -104,10 +122,11 @@
      - 사용 지표: 종가 데이터, LPPL 지표
      - 시장 수익률 : 27.9762 %
      - AI 에이전트 수익률 : 86.120 %
+     - ![image](https://user-images.githubusercontent.com/60399060/147722619-9f53425b-6f2c-4330-a6a6-9e7abf729520.png)
      - 비고 : 학습 완료 (리워드 수렴, PV 증가, actor net과 critic net 의 target 피팅 확인)
 
-     
-   - ## 검증 데이터 셋 결과
+     <br/><br/>
+   - ## 검증 데이터 셋 결과<br/>
     
      - ## 위험성 회피 전략을 사용하지 않은 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147517160-6a7bfe2d-e4d1-49ca-a8ea-33a93e5bb2a2.png)
@@ -116,8 +135,8 @@
      - 시장 수익률 : 8.411694 %
      - AI 에이전트 수익률 : -1.385 %
      - MDD(Maximum draw down) : 시장MDD= 약 -35% 일때 에이전트 최대 낙폭은 -29%로 시장대비 안정적이나 여전히 큰 하락폭이다.
-     - 결론: 종가 데이터 하나만 사용 할 경우 LPPL 지표를 사용 하는 것 보다 하락장에서 손실이 크다, 오버피팅
-    <br/><br/>
+     - 결론: 종가 데이터 하나만 사용 할 경우 LPPL 지표를 사용 하는 것 보다 하락장에서 손실이 크다, 오버피팅<br/><br/>
+   
      - ## 위험성 회피 전략(LPPL 지표+turbulence index)을 학습 한 AI 트레이더
      - ![image](https://user-images.githubusercontent.com/60399060/147558704-f37004ee-4297-4258-97a8-dbb0703c8b89.png)
      - 위 그래프: AI의 Portfolio value , 아래 그래프: SP500 주가
@@ -126,6 +145,8 @@
      - AI 에이전트 수익률 : 19.697 %
      - MDD(Maximum draw down : 최대 손실폭) : 시장MDD= 약 -35% 일때 에이전트는 최대 -20.337 % 의 낙폭을 보인다.
      - 결론: 위험성 전략을 학습 할 경우 PPO2의 탐욕적인 매매와 MDD에서 안정적인 트레이딩을 보장 한다. <br/><br/>
+
+     
      
   
 <br/><br/><br/><br/>
@@ -151,7 +172,7 @@
       - 팩터간 다중 공선성 문제 : 선정한 지표가 서로 상관 계수가 높다면 학습 비용이 상승 하고 비효율적이며 오버피팅이 일어날 가능성이 생긴다
       - 주가분포의 비정상성 : 모든 시점에 대해 일정한 평균을 가지지 않으며 분산이 일정하지 않다. (정상성을 가지면 AR모형 사용가능)
       - 약한 의존성(inf 시점으로 갈때 상관 관계가 0으로 수렴),약한 정상성을 가져야 대수의 법칙(표본의 관측 수가 많으면 통계적 추정의 정확도가 향상) 적용 가능
-      - 트랜드가 있으면 주가데이터는 fat tail을 가지므로 주가데이터 하나만 지표로 사용하는 것은 합리적이지 않다
+      - 트랜드가 있으므로 주가데이터는 fat tail을 가진다. 이로 인해 극빈값들의 빈도수가 정규분포 보다 높다.
   <br/><br/><br/><br/>
   
 ## 참고
